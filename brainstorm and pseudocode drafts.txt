@@ -1,0 +1,21 @@
+GOAL: 
+    to make a wordle assistant that takes a user input, takes the index information (gray, yellow, or green spot) and returns a list of likely words from the valid answers list
+
+    list of likely words can be the next best guesses and/or an attempt at the answer
+
+    to make this the best assistant it can be, we will need to somehow incorporate stats of how likely the word will be the answer
+
+    OR find some measure of how the next guessed word will give the most information while still attempting to solve the word
+HOW?:
+    user inputs their first guess and fills in any gray/yellow/green indexes
+
+    yellow, gray, and green can be represented with values of -1, 0, 1 (or y, w, g) respectively
+
+    once all indeces are filled out, check the list of valid answers and return the list of next best guesses
+
+    returned words MUST have (letter at index i where value == 1 or g i.e. green tile) at index i
+    returned words MUST have (letter where value == -1 or y i.e. yellow tile) anywhere in the word
+    EXCEPT if there is already a green tile. words at yellow indices cannot appear in the indices marked as green before
+    returned words MUST NOT have (letters where value == 0 or w i.e. gray tile) anywhere in the word
+        must find a way to keep track of every inputted letter. if inputted letter shows as gray, that letter must be marked for exclusion in future guesses
+        or just remove any words with those letters from the list of suggested guesses 
