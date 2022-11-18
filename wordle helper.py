@@ -1,5 +1,11 @@
+from collections import defaultdict
+
 def main():
+    stats = defaultdict(lambda: [0 for i in range(5)])
     print(f"____________________________\n\n---Hello, welcome to the Wordle assistant! To start, input your first guess and then indicate the results. \nw = gray/wrong tile | y = yellow tile | g = green tile \nGood first guesses are SALET, SLATE, CRANE, or ADIEU")
+
+    # sets and dicts have constant lookup time
+    wrong, yellow, correct = set(), {}, {}
 
     # reads through the valid answers file and appends it to possible. as the user guesses more words and adds more conditions, this list will show all valid guesses that fit the conditions
     possible = []
@@ -19,13 +25,37 @@ def main():
             if guesses == 1:
                 print(f"This very very insane....They need to check him pc and game.....Maybe he not cheating but maybe he using the game deficit ...and this cant seem on game screen..He needs to check-up....Maybe everyone dont knows him trick.He incredible....I want to ask his where is the comming of your skill's ?")
             else:
-                print(f"Well done! The word, {guess}, was solved in {guesses} turn!")
+                print(f"Well done! The word, {guess}, was solved in {guesses} turns!")
             break
         
+        # fills out the corresponding sets/dictionary with the letters guessed. constant lookup time
+        for i in range(5):
+            if result[i] == "g":
+                correct[guess[i]] = i
+            elif result[i] == "y":
+                if guess[i] not in yellow:
+                    yellow[guess[i]] = [i]
+                else:
+                    yellow[guess[i]].append(i)
+            elif result[i] == "w":
+                wrong.add(guess[i])
+
         # returned possible guess list is in a tuple, since we don't need it to be mutable. can only iterate through immutable list -- tuple 
         possible_guess = tuple(possible)
         # iterates through every word and removes words based on the conditions given in result
         for word in possible_guess:
+            for i in range(5):
+                if result[i] == "w" and guess[i] in wrong:
+                    possible.remove(word)
+                    break
+                elif result[i] == "y" and i in yellow[guess[i]]:
+                    possible.remove(word)
+                    break
+                elif result[i] == "g" and i not in correct[guess[i]]:
+                    possible.remove(word)
+                    break
+
+        """for word in possible_guess:
             for i in range(5):
                 if result[i] == "w" and guess[i] in word:
                     possible.remove(word)
@@ -38,7 +68,7 @@ def main():
                     break
                 elif result[i] == "g" and guess[i] != word[i]:
                     possible.remove(word)
-                    break
+                    break"""
         
         amount = count(possible_guess)
         
