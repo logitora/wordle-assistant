@@ -30,7 +30,7 @@ def word_score(freq, possible):
         score = 1
         for i in range(5):
             char = word[i]
-            score += (max_freq[i] - freq[char][i])
+            score += (max_freq[i] - freq[char][i])**2
         words.update({word: score})
 
     return words
@@ -48,9 +48,6 @@ def find_best_word(freq, possible):
 
 def main():
     print(f"____________________________\n\n---Hello, welcome to the Wordle assistant! To start, input your first guess and then indicate the results. \nw = gray/wrong tile | y = yellow tile | g = green tile \nGood first guesses are SALET, SLATE, CRANE, or ADIEU")
-
-    # sets and dicts have constant lookup time
-    wrong, yellow, correct = set(), {}, {}
 
     # reads through the valid answers file and appends it to possible. as the user guesses more words and adds more conditions, this list will show all valid guesses that fit the conditions
     possible = []
@@ -70,68 +67,45 @@ def main():
             if guesses == 1:
                 print(f"This very very insane....They need to check him pc and game.....Maybe he not cheating but maybe he using the game deficit ...and this cant seem on game screen..He needs to check-up....Maybe everyone dont knows him trick.He incredible....I want to ask his where is the comming of your skill's ?")
             else:
-                print(f"Well done! The word, {guess}, was solved in {guesses} turns!")
+                print(f"Well done! The word, {guess.upper()}, was solved in {guesses} turns!")
             break
-        
-        # fills out the corresponding sets/dictionary with the letters guessed. constant lookup time
-        for i in range(5):
-            if result[i] == "g":
-                correct[guess[i]] = i
-            elif result[i] == "y":
-                if guess[i] not in yellow:
-                    yellow[guess[i]] = [i]
-                else:
-                    yellow[guess[i]].append(i)
-            elif result[i] == "w":
-                wrong.add(guess[i])
 
         # returned possible guess list is in a tuple, since we don't need it to be mutable. can only iterate through immutable list -- tuple 
         possible_guess = tuple(possible)
-        # iterates through every word and removes words based on the conditions given in result
+
         for word in possible_guess:
             for i in range(5):
-                if result[i] == "w" and guess[i] in wrong:
+                if result[i] == "w" and guess[i] in word:
                     possible.remove(word)
                     break
-                elif result[i] == "y" and i in yellow[guess[i]]:
+                elif result[i] == "y" and guess[i] not in word:
                     possible.remove(word)
                     break
-                elif result[i] == "g" and i not in correct[guess[i]]:
+                elif result[i] == "y" and guess[i] == word[i]:
+                    possible.remove(word)
+                    break
+                elif result[i] == "g" and guess[i] != word[i]:
                     possible.remove(word)
                     break
         
         suggest = find_best_word(letter_freq(possible), possible)
-
-        # for word in possible_guess:
-        #     for i in range(5):
-        #         if result[i] == "w" and guess[i] in word:
-        #             possible.remove(word)
-        #             break
-        #         elif result[i] == "y" and guess[i] not in word:
-        #             possible.remove(word)
-        #             break
-        #         elif result[i] == "y" and guess[i] == word[i]:
-        #             possible.remove(word)
-        #             break
-        #         elif result[i] == "g" and guess[i] != word[i]:
-        #             possible.remove(word)
-        #             break
         
-        amount = count(possible_guess)
+        amount = len(possible)
         
         # TODO implement a measure to give each word to "rank" them on the best next guess. the best 4 will be printed as suggested guesses
 
         # for each guess, show info about which round, how many the list got narrowed down to, the <=4 best possible guesses, the guessed word, and then the result shown in emojis 🟩 🟨 ⬛
-        print(f"____________________________\n\n---Guess {guesses}: \n Remaining words = {amount}")
+        print(f"____________________________\n\n---Guess {guesses+1} \n Remaining words = {amount}")
+
         for c in result:
-            match c:
-                case "g":
-                    print("🟩", end="")
-                case "y":
-                    print("🟨", end="")
-                case "w":
-                    print("⬛", end="")
-        print(f"\nSuggested guess = {suggest}")
+            if c == "g":
+                print("🟩", end="")
+            elif c == "y":
+                print("🟨", end="")
+            elif c == "w":
+                print("⬛", end="") 
+
+        print(f"\nSuggested guess = {suggest.upper()}")
 
 if __name__ == "__main__":
     main()
