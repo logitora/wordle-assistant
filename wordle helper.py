@@ -51,6 +51,7 @@ def main():
 
     # reads through the valid answers file and appends it to possible. as the user guesses more words and adds more conditions, this list will show all valid guesses that fit the conditions
     possible = []
+    correct = {}
     try:
         # using with will ensure the file is closed automatically
         with open("valid answers.txt") as w:
@@ -73,9 +74,17 @@ def main():
         # returned possible guess list is in a tuple, since we don't need it to be mutable. can only iterate through immutable list -- tuple 
         possible_guess = tuple(possible)
 
+        # keeps track of any green tiles and where in the word they show up
+        for i in range(5):
+            if result[i] == "g":
+                if guess[i] not in correct:
+                    correct[guess[i]] = [i]
+                else:
+                    correct[guess[i]].append(i)
+
         for word in possible_guess:
             for i in range(5):
-                if result[i] == "w" and guess[i] in word:
+                if result[i] == "g" and guess[i] != word[i]:
                     possible.remove(word)
                     break
                 elif result[i] == "y" and guess[i] not in word:
@@ -84,10 +93,15 @@ def main():
                 elif result[i] == "y" and guess[i] == word[i]:
                     possible.remove(word)
                     break
-                elif result[i] == "g" and guess[i] != word[i]:
-                    possible.remove(word)
-                    break
-        
+                elif result[i] == "w" and guess[i] in word:     # handles the situation where a word has the same letter as gray and green
+                    if guess[i] not in correct:                 # ex: answer = PRIME and our guess is PENCE. this will look through our options and keep the words with E at pos 4
+                        possible.remove(word)                   # wheras before it would just throw it out since E @ pos 1 would cause words with E to be removed, leading to 0
+                        break                                   # suggested words.
+                    else:
+                        for pos in correct[guess[i]]:
+                            if word[pos] == guess[i]:
+                                continue
+
         suggest = find_best_word(letter_freq(possible), possible)
         
         amount = len(possible)
