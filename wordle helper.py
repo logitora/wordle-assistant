@@ -105,8 +105,6 @@ def main():
         suggest = find_best_word(letter_freq(possible), possible)
         
         amount = len(possible)
-        
-        # TODO implement a measure to give each word to "rank" them on the best next guess. the best 4 will be printed as suggested guesses
 
         # for each guess, show info about which round, how many the list got narrowed down to, the <=4 best possible guesses, the guessed word, and then the result shown in emojis 🟩 🟨 ⬛
         print(f"____________________________\n\n---Guess {guesses+1} \n Remaining words = {amount}")
