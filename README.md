@@ -1,5 +1,6 @@
 ﻿# wordle-assistant
-
+ #### Video Demo: https://youtu.be/OrVwqZirbi8 
+ #### Description
 ![image](https://user-images.githubusercontent.com/111263856/206656463-e0ae4ec5-b768-42aa-9a7d-81dd6cc5caa5.png)
 
 An assistive Wordle solver in Python! Wordle is a game where the user must guess the day's 5 letter word within 6 tries. The game will give information on the guessed letters
